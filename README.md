@@ -15,7 +15,7 @@ The workbench currently contains five programs:
 - A SMILES to molblock converter
 - A database discrepancy checker and resolver
 - A database initializer that connects to a database and creates an RDKit compatible table (`molecules`) with an ethanol molecule added.
-- - Please note that the initializer will wipe any existing table called `molecules`
+   - Please note that the initializer will wipe any existing table called `molecules`
 
 Please note that this workbench is still under development and may not have all the features and capabilities you might expect from a complete computational chemistry toolset. However, we are actively working on expanding its functionality and adding more tools in the future.
 
