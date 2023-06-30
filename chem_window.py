@@ -33,7 +33,7 @@ class ChemWindow(QMainWindow):
 
         self.layout.addLayout(self.button_layout)
 
-        self.load_csv_button = QPushButton('Load SMILES CSV', self)
+        self.load_csv_button = QPushButton('Load DB', self)
         self.load_csv_button.clicked.connect(self.load_local_csv)
         self.layout.addWidget(self.load_csv_button)
 
@@ -86,7 +86,7 @@ class ChemWindow(QMainWindow):
             self.show_structure(index)
             
     def load_local_csv(self):
-        # Attempt to load the local 'smiles.csv'
-        self.smiles_loader.load_smiles('smiles.csv')
+        # Attempt to load the local 'db.csv'
+        self.smiles_loader.load_smiles('db.csv')
         if len(self.smiles_loader) > 0:
             self.show_structure(0)
