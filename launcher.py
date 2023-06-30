@@ -1,7 +1,6 @@
 import sys
 from PyQt5.QtCore import QProcess
 from PyQt5.QtWidgets import QApplication, QVBoxLayout, QWidget, QPushButton
-from chem_window import ChemWindow
 from db_init import DBInitWindow
 from molview import MoleculeViewer
 from db_add_smiles import SmilesDBEntry
@@ -30,13 +29,6 @@ class Launcher(QWidget):
         # Add the button to the layout
         self.layout.addWidget(self.smiles_db_entry_button)
         
-        # Create a button for launching the structure viewer
-        self.structure_viewer_button = QPushButton('Structure Viewer', self)
-        # Connect the button's click event to the launch_structure_viewer method
-        self.structure_viewer_button.clicked.connect(self.launch_structure_viewer)
-        # Add the button to the layout
-        self.layout.addWidget(self.structure_viewer_button)
-        
         # Create a button for initializing the database
         self.init_db_button = QPushButton('Initialize Database', self)
         # Connect the button's click event to the init_db method
@@ -56,12 +48,6 @@ class Launcher(QWidget):
         self.smiles_db_entry = SmilesDBEntry()  # Create a new instance of the SmilesDBEntry class
         self.smiles_db_entry.show()  # Show the SmilesDBEntry window
         self.windows.append(self.smiles_db_entry)  # Add the SmilesDBEntry to our list of open windows
-
-        
-    def launch_structure_viewer(self):
-        self.structure_viewer = ChemWindow()  # Create a new instance of the ChemWindow class
-        self.structure_viewer.show()  # Show the ChemWindow
-        self.windows.append(self.structure_viewer)  # Add the ChemWindow to our list of open windows
 
     def init_db(self):
         self.db_window = DBInitWindow()  # Create a new instance of the DBInitWindow class

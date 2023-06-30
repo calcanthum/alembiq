@@ -32,8 +32,7 @@ class DBInitWindow(QMainWindow):
         # Set up the RDKit molecule
         smiles = 'CCO'
         mol = Chem.MolFromSmiles(smiles)
-        mol = Chem.AddHs(mol)
-        AllChem.EmbedMolecule(mol)
+        AllChem.EmbedMolecule(mol)  # Generate 3D coordinates for the molecule
 
         # Insert the molecule into the database
         self.insert_molecule(mol)
@@ -74,7 +73,14 @@ class DBInitWindow(QMainWindow):
     def insert_molecule(self, mol):
         # Generate the molecule's SMILES and molblock
         smiles = Chem.MolToSmiles(mol)
-        molblock = Chem.MolToMolBlock(mol)
+        molblock = Chem.MolToMolBlock(mol, includeStereo=True)
+
+        # Remove the 3D coordinate tags from the molblock
+        molblock_lines = molblock.split('\n')
+        molblock_lines = [line for line in molblock_lines if not line.startswith('  3D')]
+
+        # Join the molblock lines back together
+        molblock = '\n'.join(molblock_lines)
 
         # Prepare the SQL statement for insertion
         statement = "INSERT INTO molecules (smiles, molblock) VALUES (%s, %s)"

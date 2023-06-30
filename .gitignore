@@ -2,3 +2,4 @@ __pycache__/
 Untitled.ipynb
 smiles.csv
 **/.env
+.ipynb_checkpoints/
