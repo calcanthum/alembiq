@@ -5,11 +5,15 @@ Welcome to the Alembiq repository! This repository serves as a work in progress 
 
 ## Version
 
-The current release version of the workbench is v0.1.1.
+The current release version of the workbench is v0.2.0.
 
 ## About
 
-The workbench currently contains a program called "Chemical Structure Viewer," which allows you to load and visualize chemical structures using SMILES notation. It utilizes the RDKit library for chemical structure handling and PyQt5 for the graphical user interface.
+The workbench currently contains three primary programs:
+- A database updater for adding molecules to a PostgreSQL database
+- A molecule viewer that also talks to a PostgreSQL database
+- A database initializer that connects to a database and creates an RDKit compatible table (`molecules`) with an ethanol molecule added.
+- - Please note that the initializer will wipe any existing table called `molecules`
 
 Please note that this workbench is still under development and may not have all the features and capabilities you might expect from a complete computational chemistry toolset. However, we are actively working on expanding its functionality and adding more tools in the future.
 
