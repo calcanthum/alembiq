@@ -1,7 +1,7 @@
 
 # Alembiq - A Computational Chemistry Workbench
 
-Welcome to the Alembiq repository! This repository serves as a work in progress collection of tools and programs for computational chemistry.
+Welcome to the Alembiq repository! This repository serves as a work in progress collection of tools and programs for computational chemistry based on the RDKit framework and psycopg2, connecting to a PostgreSQL database (server not included).
 
 ## Version
 
