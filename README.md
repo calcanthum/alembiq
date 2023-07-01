@@ -21,7 +21,7 @@ Please note that this workbench is still under development and may not have all 
 
 ## Getting Started
 
-To use the Chemical Structure Viewer program, you will need to have Python installed on your system. Additionally, make sure you have the required dependencies listed in the `requirements.txt` file.
+To use the workbench, you will need to have Python installed on your system. Additionally, make sure you have the required dependencies listed in the `requirements.txt` file.
 
 1. Clone this repository to your local machine.
 2. Install the required dependencies by running the following command:
