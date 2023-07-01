@@ -24,19 +24,17 @@ Please note that this workbench is still under development and may not have all 
 To use the workbench, you will need to have Python installed on your system. Additionally, make sure you have the required dependencies listed in the `requirements.txt` file.
 
 1. Clone this repository to your local machine.
-2. Install the required dependencies by running the following command:
+2. Install the required dependencies:
 
    ```
    pip install -r requirements.txt
    ```
 
-3. Run the program using the following command:
+3. Run the launcher:
 
    ```
    python main.py
    ```
-
-   This will run the launcher application.
 
 ## Contributing
 
