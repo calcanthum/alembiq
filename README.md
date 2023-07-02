@@ -1,6 +1,6 @@
 # Alembiq - A Computational Chemistry Workbench
 
-Welcome to the Alembiq repository! This repository serves as a work in progress collection of tools and programs for computational chemistry based on the RDKit framework and psycopg2, connecting to a PostgreSQL database (server not included).
+Welcome to the Alembiq repository! This repository serves as a work in progress collection of tools and programs for computational chemistry based on the RDKit framework and uses psycopg2 to connect to a PostgreSQL database (server not included).
 
 ## Version
 
@@ -19,6 +19,21 @@ The workbench currently contains five programs:
 Please note that this workbench is still under development and may not have all the features and capabilities you might expect from a complete computational chemistry toolset. However, we are actively working on expanding its functionality and adding more tools in the future.
 
 ## Getting Started
+
+### Database Schema
+
+For the functionality of this workbench, you need to have a PostgreSQL table `named molecules` with the following columns:
+
+- `smiles`
+    - Stores the Simplified Molecular Input Line Entry System (SMILES) representation of the molecule.
+- `molblock`
+    - Stores the molfile (MOL) Block representation of the molecule.
+- `inchi`
+    - Stores the International Chemical Identifier (InChI) of the molecule.
+- `iupac`
+    - Stores the International Union of Pure and Applied Chemistry (IUPAC) name of the molecule.
+- `friendly`
+    - Stores a user-friendly, common name of the molecule.
 
 To use the workbench, you will need to have Python installed on your system. Additionally, make sure you have the required dependencies listed in the `requirements.txt` file.
 
