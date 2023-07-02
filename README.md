@@ -4,15 +4,14 @@ Welcome to the Alembiq repository! This repository serves as a work in progress 
 
 ## Version
 
-The current release version of the workbench is v0.3.1.
+The current release version of the workbench is v0.4.0.
 
 ## About
 
 The workbench currently contains five programs:
-- A molecule viewer that connects to a PostgreSQL database
-    - Can also display arbitrary (valid) SMILES strings
-- A database updater for adding molecules to a PostgreSQL database via SMILES strings
-- A SMILES to RDKit molblock converter
+- A molecule browser that connects to a PostgreSQL database
+- A molecule drawer that draws structures from SMILES or InChI strings
+- A database updater for adding molecules to a PostgreSQL database via SMILES or InChI strings
 - A database discrepancy checker and resolver
 - A database initializer that connects to a database and creates an RDKit compatible table (`molecules`) with an ethanol molecule added.
    - The initializer will wipe any existing table called `molecules`
