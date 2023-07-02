@@ -1,12 +1,15 @@
 import sys
 import os
 from PyQt5.QtCore import QProcess
-from PyQt5.QtWidgets import QApplication, QVBoxLayout, QWidget, QPushButton, QMessageBox, QFrame
+from PyQt5.QtWidgets import (
+    QApplication, QVBoxLayout, QWidget, QPushButton, QMessageBox, QFrame
+)
 from db_init import DBInitWindow
 from molview import MoleculeViewer
 from db_add_smiles import SmilesDBEntry
 import db_smilesvsmolblock
 import db_smiles2molblock
+
 
 class Launcher(QWidget):
     def __init__(self):
@@ -45,7 +48,6 @@ class Launcher(QWidget):
         self.init_db_button.clicked.connect(self.show_warning) # Connect the button's click event to the show_warning method
         self.layout.addWidget(self.init_db_button) # Add the button to the layout
         
-        
         self.setLayout(self.layout) # Set the layout of the window to the layout we created
 
     def molview(self):
@@ -69,6 +71,7 @@ class Launcher(QWidget):
         print(f"Error occurred in process: {error}")
 
     def smiles_to_molblock(self):
+        # Launch the db_smiles2molblock.py script using QProcess
         self.process = QProcess(self)
         self.process.setWorkingDirectory(os.getcwd())
         self.process.errorOccurred.connect(self.process_error)
