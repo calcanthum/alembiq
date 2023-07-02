@@ -20,6 +20,21 @@ Please note that this workbench is still under development and may not have all 
 
 ## Getting Started
 
+### Database Schema
+
+For the functionality of this workbench, you need to have a PostgreSQL table `named molecules` with the following columns:
+
+- `smiles`
+    - Stores the Simplified Molecular Input Line Entry System (SMILES) representation of the molecule.
+- `molblock`
+    - Stores the molfile (MOL) Block representation of the molecule.
+- `inchi`
+    - Stores the International Chemical Identifier (InChI) of the molecule.
+- `iupac`
+    - Stores the International Union of Pure and Applied Chemistry (IUPAC) name of the molecule.
+- `friendly`
+    - Stores a user-friendly, common name of the molecule.
+
 To use the workbench, you will need to have Python installed on your system. Additionally, make sure you have the required dependencies listed in the `requirements.txt` file.
 
 1. Clone this repository to your local machine.
