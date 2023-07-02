@@ -62,7 +62,10 @@ class DBInitWindow(QMainWindow):
         CREATE TABLE IF NOT EXISTS molecules (
             id SERIAL PRIMARY KEY,
             smiles TEXT,
-            molblock TEXT
+            molblock TEXT,
+            inchi TEXT,
+            iupac TEXT,
+            friendly TEXT
         )
         """
 
@@ -71,9 +74,12 @@ class DBInitWindow(QMainWindow):
         self.conn.commit()
 
     def insert_molecule(self, mol):
-        # Generate the molecule's SMILES and molblock
+        # Generate the molecule's SMILES, molblock, InChI, IUPAC, and friendly name
         smiles = Chem.MolToSmiles(mol)
         molblock = Chem.MolToMolBlock(mol, includeStereo=True)
+        inchi = Chem.MolToInchi(mol)
+        iupac = "Ethanol"
+        friendly = "Ethanol"
 
         # Remove the 3D coordinate tags from the molblock
         molblock_lines = molblock.split('\n')
@@ -83,8 +89,8 @@ class DBInitWindow(QMainWindow):
         molblock = '\n'.join(molblock_lines)
 
         # Prepare the SQL statement for insertion
-        statement = "INSERT INTO molecules (smiles, molblock) VALUES (%s, %s)"
-        values = (smiles, molblock)
+        statement = "INSERT INTO molecules (smiles, molblock, inchi, iupac, friendly) VALUES (%s, %s, %s, %s, %s)"
+        values = (smiles, molblock, inchi, iupac, friendly)
 
         # Execute the SQL statement
         self.cursor.execute(statement, values)
