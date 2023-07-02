@@ -2,11 +2,14 @@ import os
 from dotenv import load_dotenv
 from rdkit import Chem
 from rdkit.Chem import Draw
-from PyQt5.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget, QPushButton, QLineEdit, QFrame, QMenu, QFileDialog
+from PyQt5.QtWidgets import (
+    QApplication, QLabel, QVBoxLayout, QWidget, QPushButton, QLineEdit, QFrame, QMenu, QFileDialog
+)
 from PyQt5.QtGui import QPixmap, QImage
 from PyQt5.QtCore import Qt
 import psycopg2
 import io
+
 
 class MoleculeViewer(QWidget):
     def __init__(self):
@@ -20,16 +23,16 @@ class MoleculeViewer(QWidget):
         self.label = QLabel()
         self.layout.addWidget(self.label)
         
-        # Create a right-click menu
+        
         self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.show_context_menu)
 
-        self.input_smiles = QLineEdit(self)
-        self.input_smiles.setPlaceholderText("Enter SMILES")  # Add gray description text
-        self.layout.addWidget(self.input_smiles)
+        self.input_field = QLineEdit(self)  # Change to a more general name
+        self.input_field.setPlaceholderText("Enter SMILES or InChI")  # Add gray description text
+        self.layout.addWidget(self.input_field)
 
         self.display_button = QPushButton('Display', self)
-        self.display_button.clicked.connect(self.display_input_molecule)
+        self.display_button.clicked.connect(self.display_input_structure)
         self.layout.addWidget(self.display_button)
         
         # Create a line to separate the sections
@@ -92,16 +95,20 @@ class MoleculeViewer(QWidget):
         else:
             self.label.setText("No molecules found in database.")
 
-    def display_input_molecule(self):
-        smiles = self.input_smiles.text()
-        molecule = Chem.MolFromSmiles(smiles)
+    def display_input_structure(self):  # Change to a more general name
+        input_str = self.input_field.text()  # Change to a more general name
+        if input_str.startswith('InChI='):
+            molecule = Chem.MolFromInchi(input_str)
+        else:
+            molecule = Chem.MolFromSmiles(input_str)
+
         if molecule is not None:
             img = Draw.MolToQPixmap(molecule)
             self.label.setPixmap(img)
             self.from_input = True  # set the flag to True
         else:
-            self.label.setText("Invalid SMILES string.")
-        self.input_smiles.clear()
+            self.label.setText("Invalid SMILES or InChI string.")
+        self.input_field.clear()  # Change to a more general name
 
     def next_molecule(self):
         if self.from_input:  # if the current molecule is from input
