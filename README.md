@@ -1,18 +1,18 @@
-
 # Alembiq - A Computational Chemistry Workbench
 
 Welcome to the Alembiq repository! This repository serves as a work in progress collection of tools and programs for computational chemistry based on the RDKit framework and psycopg2, connecting to a PostgreSQL database (server not included).
 
 ## Version
 
-The current release version of the workbench is v0.3.0.
+The current release version of the workbench is v0.3.1.
 
 ## About
 
 The workbench currently contains five programs:
 - A molecule viewer that connects to a PostgreSQL database
+    - Can also display arbitrary (valid) SMILES strings
 - A database updater for adding molecules to a PostgreSQL database via SMILES strings
-- A SMILES to molblock converter
+- A SMILES to RDKit molblock converter
 - A database discrepancy checker and resolver
 - A database initializer that connects to a database and creates an RDKit compatible table (`molecules`) with an ethanol molecule added.
    - The initializer will wipe any existing table called `molecules`
