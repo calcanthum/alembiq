@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from rdkit import Chem
 from rdkit.Chem import Draw
-from PyQt5.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget, QPushButton, QLineEdit, QFrame
+from PyQt5.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget, QPushButton, QLineEdit, QFrame, QMenu, QFileDialog
 from PyQt5.QtGui import QPixmap, QImage
 from PyQt5.QtCore import Qt
 import psycopg2
@@ -19,6 +19,10 @@ class MoleculeViewer(QWidget):
         self.layout = QVBoxLayout()
         self.label = QLabel()
         self.layout.addWidget(self.label)
+        
+        # Create a right-click menu
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.show_context_menu)
 
         self.input_smiles = QLineEdit(self)
         self.input_smiles.setPlaceholderText("Enter SMILES")  # Add gray description text
@@ -115,6 +119,30 @@ class MoleculeViewer(QWidget):
             self.cur_molecule_index -= 1
         self.display_molecule()
 
+    def show_context_menu(self, pos):
+        # Create the right-click menu
+        menu = QMenu(self)
+
+        # Add the "Save as PNG" option to the menu
+        save_png_action = menu.addAction("Save as PNG")
+        save_png_action.triggered.connect(self.save_image_as_png)
+
+        # Show the menu at the clicked position
+        menu.exec_(self.mapToGlobal(pos))
+
+    def save_image_as_png(self):
+        # Get the molecule image pixmap
+        pixmap = self.label.pixmap()
+
+        if pixmap is not None:
+            # Get the file path using a file dialog or specify a default file path
+            file_path, _ = QFileDialog.getSaveFileName(self, "Save Image", "", "PNG (*.png)")
+
+            if file_path:
+                # Save the pixmap as a transparent PNG
+                pixmap.save(file_path, "PNG", 0)  # 0 represents the quality (0-100)
+        else:
+            print("No image to save.")
 
 if __name__ == "__main__":
     app = QApplication([])
