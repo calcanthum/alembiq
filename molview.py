@@ -32,7 +32,8 @@ class MoleculeViewer(QWidget):
         self.display_button.clicked.connect(self.display_input_molecule)
         self.layout.addWidget(self.display_button)
         
-        self.line = QFrame() # Create a line to separate the sections
+        # Create a line to separate the sections
+        self.line = QFrame() 
         self.line.setFrameShape(QFrame.HLine)
         self.line.setFrameShadow(QFrame.Sunken)
         self.layout.addWidget(self.line)
@@ -101,7 +102,6 @@ class MoleculeViewer(QWidget):
         else:
             self.label.setText("Invalid SMILES string.")
         self.input_smiles.clear()
-
 
     def next_molecule(self):
         if self.from_input:  # if the current molecule is from input
