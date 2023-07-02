@@ -18,6 +18,7 @@ class Launcher(QWidget):
         self.setWindowTitle('Program Launcher')  # Set the window title
         self.layout = QVBoxLayout()  # Create a vertical box layout
         
+        # Buttons
         
         self.molview_button = QPushButton('Molecule Viewer', self) # Create a button for launching the molecule viewer
         self.molview_button.clicked.connect(self.molview) # Connect the button's click event to the molview method
@@ -57,10 +58,6 @@ class Launcher(QWidget):
         self.smiles_db_entry.show()  # Show the SmilesDBEntry window
         self.windows.append(self.smiles_db_entry)  # Add the SmilesDBEntry to our list of open windows
         
-    def smiles_to_molblock(self):
-        # Implement the functionality for converting SMILES to molblocks here
-        print("Converting SMILES to Molblocks")
-        
     def check_db(self):
         # Launch the db_smilesvsmolblock.py script using QProcess
         self.process = QProcess(self)
@@ -71,9 +68,6 @@ class Launcher(QWidget):
     def process_error(self, error):
         print(f"Error occurred in process: {error}")
 
-
-        
-        
     def smiles_to_molblock(self):
         self.process = QProcess(self)
         self.process.setWorkingDirectory(os.getcwd())

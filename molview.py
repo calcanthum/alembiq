@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from rdkit import Chem
 from rdkit.Chem import Draw
-from PyQt5.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget, QPushButton
+from PyQt5.QtWidgets import QApplication, QLabel, QVBoxLayout, QWidget, QPushButton, QLineEdit, QFrame
 from PyQt5.QtGui import QPixmap, QImage
 from PyQt5.QtCore import Qt
 import psycopg2
@@ -11,13 +11,27 @@ import io
 class MoleculeViewer(QWidget):
     def __init__(self):
         super().__init__()
-
+        
+        self.from_input = False # introduce a flag to keep track of whether the displayed molecule is from input or database
         self.cur_molecule_index = 0
         self.molecules = []
 
         self.layout = QVBoxLayout()
         self.label = QLabel()
         self.layout.addWidget(self.label)
+
+        self.input_smiles = QLineEdit(self)
+        self.input_smiles.setPlaceholderText("Enter SMILES")  # Add gray description text
+        self.layout.addWidget(self.input_smiles)
+
+        self.display_button = QPushButton('Display', self)
+        self.display_button.clicked.connect(self.display_input_molecule)
+        self.layout.addWidget(self.display_button)
+        
+        self.line = QFrame() # Create a line to separate the sections
+        self.line.setFrameShape(QFrame.HLine)
+        self.line.setFrameShadow(QFrame.Sunken)
+        self.layout.addWidget(self.line)
 
         self.next_button = QPushButton('Next', self)
         self.next_button.clicked.connect(self.next_molecule)
@@ -40,13 +54,19 @@ class MoleculeViewer(QWidget):
         db_host = os.getenv('DB_HOST')
         db_port = os.getenv('DB_PORT')
 
-        connection = psycopg2.connect(
-            dbname=db_name,
-            user=db_user,
-            password=db_password,
-            host=db_host,
-            port=db_port
-        )
+        try:
+            connection = psycopg2.connect(
+                dbname=db_name,
+                user=db_user,
+                password=db_password,
+                host=db_host,
+                port=db_port
+            )
+        except psycopg2.OperationalError as e:
+            print(f"Could not connect to the database: {e}")
+            self.next_button.setEnabled(False)  # Disable "Next" button
+            self.prev_button.setEnabled(False)  # Disable "Previous" button
+            return  # Exit the function early
 
         cursor = connection.cursor()
         cursor.execute("SELECT smiles FROM molecules")
@@ -58,6 +78,7 @@ class MoleculeViewer(QWidget):
 
         connection.close()
 
+
     def display_molecule(self):
         if self.molecules:
             molecule = self.molecules[self.cur_molecule_index]
@@ -66,16 +87,33 @@ class MoleculeViewer(QWidget):
         else:
             self.label.setText("No molecules found in database.")
 
+    def display_input_molecule(self):
+        smiles = self.input_smiles.text()
+        molecule = Chem.MolFromSmiles(smiles)
+        if molecule is not None:
+            img = Draw.MolToQPixmap(molecule)
+            self.label.setPixmap(img)
+            self.from_input = True  # set the flag to True
+        else:
+            self.label.setText("Invalid SMILES string.")
+        self.input_smiles.clear()
+
 
     def next_molecule(self):
-        if self.molecules and self.cur_molecule_index < len(self.molecules) - 1:
+        if self.from_input:  # if the current molecule is from input
+            self.cur_molecule_index = 0  # reset the index to 0
+            self.from_input = False  # reset the flag
+        elif self.molecules and self.cur_molecule_index < len(self.molecules) - 1:
             self.cur_molecule_index += 1
-            self.display_molecule()
+        self.display_molecule()
 
     def prev_molecule(self):
-        if self.molecules and self.cur_molecule_index > 0:
+        if self.from_input:  # if the current molecule is from input
+            self.cur_molecule_index = len(self.molecules) - 1  # set the index to the last molecule
+            self.from_input = False  # reset the flag
+        elif self.molecules and self.cur_molecule_index > 0:
             self.cur_molecule_index -= 1
-            self.display_molecule()
+        self.display_molecule()
 
 
 if __name__ == "__main__":
