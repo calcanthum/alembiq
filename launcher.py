@@ -1,6 +1,5 @@
 import sys
 import os
-from PyQt5.QtCore import QProcess
 from PyQt5.QtWidgets import (
     QApplication, QVBoxLayout, QWidget, QPushButton, QMessageBox, QFrame
 )
@@ -10,6 +9,12 @@ from db_add_molecule import MoleculeDBEntry
 import db_smilesvsmolblock
 from db_browser import DBBrowser
 from moldraw import MoleculeDrawer
+import db_core
+import subprocess
+
+
+# Initialize the connection pool
+db_core.init_connection_pool(minconn=1, maxconn=10)
 
 class Launcher(QWidget):
     def __init__(self):
@@ -75,12 +80,16 @@ class Launcher(QWidget):
         self.db_browser.show()  # Show the MoleculeViewer
         self.windows.append(self.db_browser)  # Add the MoleculeViewer to our list of open windows
         
+
     def check_db(self):
-        # Launch the db_smilesvsmolblock.py script using QProcess
-        self.process = QProcess(self)
-        self.process.setWorkingDirectory(os.getcwd())
-        self.process.errorOccurred.connect(self.process_error)  # Connect the errorOccurred signal to a custom slot
-        self.process.start("python", ["db_smilesvsmolblock.py"])
+        # Launch the db_smilesvsmolblock.py script using subprocess
+        script_path = os.path.abspath("db_smilesvsmolblock.py")
+        try:
+            subprocess.run(["python", script_path], check=True)
+        except subprocess.CalledProcessError as e:
+            print(f"Error occurred in process: {e}")
+            QMessageBox.critical(self, "Process Error", f"An error occurred in the process:\n\n{e}")
+
 
     def process_error(self, error):
         print(f"Error occurred in process: {error}")

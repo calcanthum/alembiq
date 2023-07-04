@@ -2,6 +2,7 @@ import os
 import psycopg2
 from dotenv import load_dotenv
 from PyQt5.QtWidgets import QApplication, QVBoxLayout, QWidget, QTableWidget, QTableWidgetItem, QPushButton
+from db_core import get_connection_from_pool, release_connection_to_pool
 
 load_dotenv()
 
@@ -30,28 +31,18 @@ class DBBrowser(QWidget):
         self.layout.addWidget(self.save_button)
         self.setLayout(self.layout)
 
-        self.conn = self.connect_to_db()
-
         self.load_data()
 
         self.delete_button.clicked.connect(self.delete_row)
         self.save_button.clicked.connect(self.save_changes)
 
-    def connect_to_db(self):
-        conn = psycopg2.connect(
-            dbname=DB_NAME,
-            user=DB_USER,
-            password=DB_PASSWORD,
-            host=DB_HOST,
-            port=DB_PORT
-        )
-        return conn
-
     def load_data(self):
-        cur = self.conn.cursor()
+        conn = get_connection_from_pool()
+        cur = conn.cursor()
         cur.execute('SELECT id, smiles, molblock, inchi, friendly, iupac FROM molecules')
         data = cur.fetchall()
         cur.close()
+        release_connection_to_pool(conn)
 
         self.table.setRowCount(0)
         self.table.setColumnCount(6)  # Update column count to include 'friendly' and 'iupac'
@@ -74,11 +65,13 @@ class DBBrowser(QWidget):
             self.save_button.setEnabled(True)
 
     def save_changes(self):
-        cur = self.conn.cursor()
+        conn = get_connection_from_pool()
+        cur = conn.cursor()
         for row_id in self.rows_to_delete.values():
             cur.execute('DELETE FROM molecules WHERE id = %s', (row_id,))
-        self.conn.commit()
+        conn.commit()
         cur.close()
+        release_connection_to_pool(conn)
         # Clear rows_to_delete and reload data
         self.rows_to_delete.clear()
         self.load_data()

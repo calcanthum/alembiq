@@ -1,40 +1,29 @@
 import os
-import psycopg2
+import uuid
 from dotenv import load_dotenv
 from rdkit import Chem
 from PyQt5.QtWidgets import QApplication, QVBoxLayout, QWidget, QTextEdit, QPushButton, QMessageBox
 from functools import partial
+import db_core
+from db_core import get_connection_from_pool, release_connection_to_pool
+
+db_core.init_connection_pool(minconn=1, maxconn=10)
 
 load_dotenv()
-
-DB_NAME = os.getenv("DB_NAME")
-DB_USER = os.getenv("DB_USER")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
-DB_HOST = os.getenv("DB_HOST")
-DB_PORT = os.getenv("DB_PORT")
-
-def connect_to_db():
-    conn = psycopg2.connect(
-        dbname=DB_NAME,
-        user=DB_USER,
-        password=DB_PASSWORD,
-        host=DB_HOST,
-        port=DB_PORT
-    )
-    return conn
-
-def fetch_smiles_molblocks_and_inchi(conn):
+print("Starting application...")
+def fetch_smiles_molblocks_inchi_and_uuid(conn):
     cur = conn.cursor()
-    cur.execute('SELECT id, smiles, molblock, inchi FROM molecules')
+    cur.execute('SELECT id, smiles, molblock, inchi, uuid FROM molecules')
     data = cur.fetchall()
     cur.close()
     return data
 
-def compare_smiles_molblocks_and_inchi(data):
+def compare_smiles_molblocks_inchi_and_uuid(data):
     discrepancies = []
     errors = []
+    missing_uuids = []
     for row in data:
-        id_, smiles, molblock, inchi = row
+        id_, smiles, molblock, inchi, molecule_uuid = row
         mol = None
         if molblock is not None:
             try:
@@ -51,7 +40,7 @@ def compare_smiles_molblocks_and_inchi(data):
                 mol = Chem.MolFromInchi(inchi)
             except Exception as e:
                 errors.append((id_, f"Malformed inchi: {str(e)}"))
-        
+
         if mol:
             smiles_from_mol = Chem.MolToSmiles(mol)
             inchi_from_mol = Chem.MolToInchi(mol)
@@ -59,10 +48,13 @@ def compare_smiles_molblocks_and_inchi(data):
                 discrepancies.append((id_, smiles or smiles_from_mol, Chem.MolToMolBlock(mol), inchi or inchi_from_mol))
         else:
             errors.append((id_, "Missing molblock, smiles, and inchi. Cannot generate missing data."))
-    return discrepancies, errors
 
+        if not molecule_uuid:
+            missing_uuids.append(id_)
 
-def correct_discrepancies(conn, discrepancies):
+    return discrepancies, errors, missing_uuids
+
+def correct_discrepancies(conn, discrepancies, missing_uuids):
     cur = conn.cursor()
     for id_, smiles_from_molblock, molblock_from_mol, inchi_from_molblock in discrepancies:
         try:
@@ -70,39 +62,50 @@ def correct_discrepancies(conn, discrepancies):
             conn.commit()
         except Exception as e:
             return f"Error: {str(e)}"
+    
+    for id_ in missing_uuids:
+        try:
+            new_uuid = str(uuid.uuid4())
+            cur.execute('UPDATE molecules SET uuid = %s WHERE id = %s', (new_uuid, id_))
+            conn.commit()
+        except Exception as e:
+            return f"Error: {str(e)}"
+            
     cur.close()
-    return "Successfully corrected discrepancies."
-
+    return "Successfully corrected discrepancies and added missing UUIDs."
 
 def main():
-    conn = connect_to_db()
-    data = fetch_smiles_molblocks_and_inchi(conn)
-    discrepancies, errors = compare_smiles_molblocks_and_inchi(data)
+    print("Inside main()")
+    conn = get_connection_from_pool()  # fetch a connection from pool
+    data = fetch_smiles_molblocks_inchi_and_uuid(conn)
+    discrepancies, errors, missing_uuids = compare_smiles_molblocks_inchi_and_uuid(data)
+
 
     app = QApplication([])
     window = QWidget()
     layout = QVBoxLayout()
     text_edit = QTextEdit()
-    button = QPushButton("Correct discrepancies")
+    button = QPushButton("Correct discrepancies and add missing UUIDs")
 
     def handle_button_click():
-        result = correct_discrepancies(conn, discrepancies)
+        result = correct_discrepancies(conn, discrepancies, missing_uuids)
         text_edit.setText(result)
 
-    if discrepancies or errors:
+    if discrepancies or errors or missing_uuids:
         details = ""
         for id_, smiles, molblock_from_mol, inchi in discrepancies:
             molblock_exists = "Present" if molblock_from_mol else "NULL"
             details += f'ID: {id_}, Original SMILES: {smiles if smiles else "NULL"}, Molblock from mol: {molblock_exists}, Original InChI: {inchi if inchi else "NULL"}\n'
+        for id_ in missing_uuids:
+            details += f'ID: {id_}, Missing UUID.\n'
         for id_, error in errors:
             details += f'ID: {id_}, Error: {error}\n'
         text_edit.setText(details)
 
-        # Change this line to use the new handle_button_click function
         button.clicked.connect(handle_button_click)
 
     else:
-        text_edit.setText("No discrepancies or errors found.")
+        text_edit.setText("No discrepancies or errors found. No missing UUIDs.")
         button.setEnabled(False)
 
     layout.addWidget(text_edit)
@@ -111,7 +114,8 @@ def main():
     window.show()
     app.exec_()
 
-    conn.close()
+    release_connection_to_pool(conn)  # release the connection back to pool
+
 
 if __name__ == "__main__":
     main()
