@@ -4,7 +4,7 @@ Welcome to the Alembiq repository! This repository serves as a work in progress 
 
 ## Version
 
-The current release version of the workbench is v0.4.0.
+The current release version of the workbench is v0.4.1.
 
 ## About
 
