@@ -22,21 +22,32 @@ Please note that this workbench is still under development and may not have all 
 
 See: [Database Schema](./db_schema.md)
 
-
 To use the workbench, you will need to have Python installed on your server. Additionally, make sure you have the required dependencies listed in the `requirements.txt` file.
 
-1. Clone this repository to your local machine.
+1. Clone this repository to a local directory and enter it:
+
+    ```
+    git clone https://github.com/calcanthum/alembiq
+    cd alembiq
+    ```
+
 2. Install the required dependencies:
 
    ```
    pip install -r requirements.txt
    ```
 
-3. Run the launcher:
+3. Run the server:
 
    ```
-   python main.py
+   python alembiq_server.py
    ```
+
+4. Open a browser window and go to:
+
+    ```
+    127.0.0.1:5000
+    ```
 
 ## Contributing
 
