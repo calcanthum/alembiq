@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Molecule Viewer</title>
+    <script src="https://unpkg.com/ngl@2.0.0-dev.32/dist/ngl.js"></script>
+    <script src="/static/js/moldraw.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/moldraw.css">
+
+    <!-- CSS for the button position -->
+    <style>
+        #go-to-homepage-btn {
+            position: fixed;
+            top: 2vw;
+            right: 2vw;
+            width: 3vw;
+            height: 3vw;
+            background-color: #ff0000;
+            color: #fff;
+            font-size: 3vw;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="input-section">
+        <input id="input-field" type="text" placeholder="Enter SMILES or InChI">
+        <button onclick="displayInputStructure()">Display</button>
+        <select id="molecule-selector"></select>
+        <button onclick="displaySelectedStructure()">Display Selected</button>
+        <label><input type="radio" name="representation" value="ball+stick" checked>Ball+Stick</label>
+        <label><input type="radio" name="representation" value="licorice">Licorice</label>
+        <label><input type="radio" name="representation" value="spacefill">Spacefill</label>
+    </div>
+    <div id="molecule-viewer-container">
+        <div id="molecule-viewer" style="width:100%; height:100%"></div>
+    </div>
+    <button id="go-to-homepage-btn" onclick="goToHomepage()">⚗</button>
+
+    <script>
+        function goToHomepage() {
+            window.location.href = "/";
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#edit-button").click(function() {
+                $(".editable-field").prop("disabled", false);
+                $(".submit-button").prop("disabled", false);
+                $(this).prop("disabled", true);
+            });
+        });
+    </script>
+
+    <title>Quill</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        #go-to-homepage-btn {
+            position: fixed;
+            top: 2vw;
+            right: 2vw;
+            width: 3vw;
+            height: 3vw;
+            background-color: #ff0000;
+            color: #fff;
+            font-size: 3vw;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Quill</h1>
+    <h2>Alembiq Database Editor</h2>
+
+    <form method="post" action="/db_browser">
+        <label for="selected_table">Select a Table:</label>
+        <select id="selected_table" name="selected_table">
+            <option value="">-- Select a Table --</option>
+            {% for table_name in table_names %}
+                <option value="{{ table_name }}" {% if table_name == selected_table %}selected{% endif %}>{{ table_name }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="Load Table">
+    </form>
+
+    <button id="edit-button">Edit</button>
+    <button id="submit-button" disabled>Submit</button>
+
+    <table>
+        <tr>
+            <!-- Assuming the columns in the table are dynamic, we display all columns -->
+            {% if data %}
+                {% for column in data[0].keys() %}
+                    <th>{{ column }}</th>
+                {% endfor %}
+            {% endif %}
+        </tr>
+        {% for row in data %}
+            <tr>
+                {% for column, value in row.items() %}
+                    <td>
+                        <form class="edit-form" method="post" action="/update">
+                            <input type="hidden" name="table" value="{{ selected_table }}">
+                            <input type="hidden" name="column" value="{{ column }}">
+                            <input type="hidden" name="id" value="{{ row['id'] }}">
+                            <input class="editable-field" name="value" value="{{ value }}" disabled>
+                            <input type="submit" class="submit-button" value="Submit" disabled>
+                        </form>
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+
+    <button id="go-to-homepage-btn" onclick="goToHomepage()">⚗</button>
+
+    <script>
+        function goToHomepage() {
+            window.location.href = "/";
+        }
+    </script>
+</body>
+</html>

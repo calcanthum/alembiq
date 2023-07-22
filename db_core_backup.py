@@ -52,29 +52,9 @@ def release_connection_to_pool(conn):
 def fetch_molecules(conn):
     try:
         cursor = conn.cursor()
-        cursor.execute("SELECT id, smiles, iupac FROM molecules")
+        cursor.execute("SELECT smiles, iupac FROM molecules")
         rows = cursor.fetchall()
-        if rows is None:
-            return [], []
-        column_names = [desc[0] for desc in cursor.description]
-        data = [dict(zip(column_names, row)) for row in rows]
-        return data, column_names
-    except DatabaseError as e:
-        print(f"Database error: {e}")
-        conn.close()
-        return [], []
-
-
-def fetch_data_from_table(conn, table_name):
-    try:
-        cursor = conn.cursor()
-        cursor.execute(f"SELECT * FROM {table_name}")
-        rows = cursor.fetchall()
-        columns = [desc[0] for desc in cursor.description]
-        data = []
-        for row in rows:
-            data.append(dict(zip(columns, row)))
-        return data
+        return rows
     except DatabaseError as e:
         print(f"Database error: {e}")
         conn.close()

@@ -1,20 +1,18 @@
 # Alembiq - A Computational Chemistry Workbench
 
-Welcome to the Alembiq repository! This repository serves as a work in progress collection of tools and programs for computational chemistry based on the RDKit framework and uses psycopg2 to connect to a PostgreSQL database (server not included).
-
+Welcome to the Alembiq repository! This repository serves as a work in progress collection of tools and programs for computational chemistry. The workbench is powered by RDKit, Flask, and NGL Viewer.
 ## Version
 
-The current release version of the workbench is v0.4.1.
+The current release version of the workbench is v0.5
 
 ## About
 
-The workbench currently contains five programs:
-- A molecule browser that connects to a PostgreSQL database
-- A molecule drawer that draws structures from SMILES or InChI strings
-- A database updater for adding molecules to a PostgreSQL database via SMILES or InChI strings
-- A database discrepancy checker and resolver
-- A database initializer that connects to a database and creates an RDKit compatible table (`molecules`) with an ethanol molecule added.
-   - The initializer will wipe any existing table called `molecules`
+The workbench currently contains four programs:
+- A molecule viewer that can render molecules from the database, or draw new ones from SMILES or InChI strings.
+- A molecule inserter that allows a user to add a molecule to the database using SMILES or InChI, and computes the molblock.
+- A database initializer that sets up a database with model data
+  - Model data: ethanol, water, oxygen, carbon dioxide and a reaction entry describing the combustion of ethanol
+- A database browser/editor
 
 Please note that this workbench is still under development and may not have all the features and capabilities you might expect from a complete computational chemistry toolset. However, we are actively working on expanding its functionality and adding more tools in the future.
 
@@ -22,20 +20,10 @@ Please note that this workbench is still under development and may not have all 
 
 ### Database Schema
 
-For the functionality of this workbench, you need to have a PostgreSQL table `named molecules` with the following columns:
+See: [Database Schema](./db_schema.md)
 
-- `smiles`
-    - Stores the Simplified Molecular Input Line Entry System (SMILES) representation of the molecule.
-- `molblock`
-    - Stores the molfile (MOL) Block representation of the molecule.
-- `inchi`
-    - Stores the International Chemical Identifier (InChI) of the molecule.
-- `iupac`
-    - Stores the International Union of Pure and Applied Chemistry (IUPAC) name of the molecule.
-- `friendly`
-    - Stores a user-friendly, common name of the molecule.
 
-To use the workbench, you will need to have Python installed on your system. Additionally, make sure you have the required dependencies listed in the `requirements.txt` file.
+To use the workbench, you will need to have Python installed on your server. Additionally, make sure you have the required dependencies listed in the `requirements.txt` file.
 
 1. Clone this repository to your local machine.
 2. Install the required dependencies:

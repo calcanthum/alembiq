@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Alembiq</title>
+<style>
+    /* Style for the body to center everything */
+    body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        text-align: center;
+    }
+
+    /* Style for the buttons container */
+    .buttons-container {
+        display: flex;
+        flex-direction: column; /* this makes the buttons stack vertically */
+        gap: 10px; /* Add some space between buttons */
+        align-items: center; /* Center the buttons horizontally */
+        justify-content: center; /* Center the buttons vertically */
+        width: 100%;
+    }
+
+    /* Style for individual buttons */
+    .buttons-container button {
+        width: 30%;
+        font-size: 24px; /* Adjust the size of the emoji and text as needed */
+        cursor: pointer; /* Change the cursor to a pointer on hover */
+    }
+
+    /* Custom CSS for the logo */
+    .logo {
+        font-size: 15vw;
+        display: block;
+    }
+
+    hr {
+        width: 30%;
+        border: none;
+        height: 1px;
+        background-color: black;
+    }
+        .buttons-container button:hover {
+        content: attr(data-text); /* Display the data-text attribute content on hover */
+    }
+</style>
+
+</head>
+<body>
+    <span class="logo">⚗️</span>
+    <h1>Welcome to Alembiq!</h1>
+    <p>Choose a tool:</p>
+    <div class="buttons-container">
+        <button onclick="runMolDraw()" data-text="Molecule Viewer">🔎</button>
+        <button onclick="insertMolecule()" data-text="Molecule Inserter">⬆️</button>
+        <button onclick="runDBBrowser()" data-text="Database Editor">🪶</button>
+        <hr>
+        <button onclick="confirmDBInit()" data-text="Database Initializer">⚠️</button>
+    </div>
+
+    <script>
+        function runDBInit() {
+            // Sending a GET request to the /db_init endpoint
+            fetch('/db_init')
+                .then(response => response.text())  // Change to text() to handle HTML response
+                .then(data => {
+                    console.log(data);
+                    // Display the response in a dialog box
+                    alert(data);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function confirmDBInit() {
+            // Display a confirmation dialog to the user
+            if (confirm("Are you sure you want to initialize the database? This action is irreversible.")) {
+                // If the user clicks "OK," proceed with the database initialization
+                runDBInit();
+            } else {
+                // If the user clicks "Cancel," do nothing
+            }
+        }
+
+        function runMolDraw() {
+            // Redirecting to the /moldraw endpoint
+            window.location.href = '/moldraw';
+        }
+
+        function insertMolecule() {
+            const molecule_string = prompt('Please enter the SMILES or InChI string:');
+            if (molecule_string) {
+                // Sending a POST request to the /molecule_insert endpoint with the molecule_string
+                fetch('/molecule_insert', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ molecule_string: molecule_string })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    // Display the response in a dialog box
+                    alert(data.message);
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        }
+
+        function runDBBrowser() {
+            // Redirecting to the /db_browser endpoint
+            window.location.href = '/db_browser';
+        }
+
+        // JavaScript to change button content on hover
+        const buttons = document.querySelectorAll('.buttons-container button');
+        buttons.forEach(button => {
+            button.addEventListener('mouseover', () => {
+                button.textContent = button.dataset.text;
+            });
+
+            button.addEventListener('mouseout', () => {
+                button.textContent = button.dataset.emoji;
+            });
+
+            // Store the initial emoji content in the 'data-emoji' attribute
+            button.dataset.emoji = button.textContent;
+        });
+    </script>
+</body>
+</html>

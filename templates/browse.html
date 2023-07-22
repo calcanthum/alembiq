@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PostgreSQL Database Browser - {{ table_name }}</title>
+</head>
+<body>
+    <h1>PostgreSQL Database Browser - {{ table_name }}</h1>
+    {% if data %}
+        <table>
+            <tr>
+                {% for column in data[0].keys() %}
+                <th>{{ column }}</th>
+                {% endfor %}
+            </tr>
+            {% for row in data %}
+            <tr>
+                {% for value in row.values() %}
+                <td>{{ value }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No data available for this table.</p>
+    {% endif %}
+</body>
+</html>
