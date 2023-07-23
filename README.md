@@ -9,7 +9,7 @@ The current release version of the workbench is v0.5.1
 
 The workbench currently contains four programs:
 - A molecule viewer that can render molecules from the database, or draw new ones from SMILES or InChI strings.
-- A molecule inserter that allows a user to add a molecule to the database using SMILES or InChI, and computes the molblock.
+- A molecule inserter that allows a user to add a molecule to the database using SMILES or InChI, and computes the molblock and SMARTS.
 - A database initializer that sets up a database with model data
   - Model data: ethanol, water, oxygen, carbon dioxide and a reaction entry describing the combustion of ethanol
 - A database browser/editor
