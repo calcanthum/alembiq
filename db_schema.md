@@ -9,6 +9,7 @@ The Alembiq Database is designed to store and organize chemical data related to 
 - `smiles`: The Simplified Molecular Input Line Entry System (SMILES) notation for the molecule.
 - `inchi`: The International Chemical Identifier (InChI) for the molecule.
 - `iupac`: The International Union of Pure and Applied Chemistry (IUPAC) name of the molecule.
+- `smarts`: SMILES arbitrary target specification (SMARTS) string of the molecule
 ---
 ## `molecule_properties`
 - `id`: An identifier for each molecule property entry.
@@ -51,3 +52,4 @@ The Alembiq Database is designed to store and organize chemical data related to 
 - `id`: An identifier for each reaction.
 - `uuid`: A universally unique identifier for each reaction.
 - `reaction_type`: The classification or type of the reaction.
+- `rxn`: RXN file for the reaction.

@@ -8,6 +8,15 @@ The current release version of the workbench is v0.5.1
 
 ## About
 
+The AlembIQ Workbench is designed to interact with a wide range of chemical data, including:
+
+- Basic molecular data, such as SMILES, InChI, SMARTS, and IUPAC names
+- Molecular properties, including molecular weight, rotatable bond count, and aromaticity
+- Detailed molecular structures in molblock format
+- Detailed reaction descriptions in RXN format
+- Reaction-related data, including participants, conditions, and types of reactions
+- Information about catalysts, including name, description, and details
+
 The workbench currently contains four programs:
 - A molecule viewer that can render molecules from the database, or draw new ones from SMILES or InChI strings.
 - A molecule inserter that allows a user to add a molecule to the database using SMILES or InChI, and computes the molblock and SMARTS.
