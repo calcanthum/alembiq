@@ -15,7 +15,7 @@ The workbench currently contains four programs:
   - Model data: ethanol, water, oxygen, carbon dioxide and a reaction entry describing the combustion of ethanol
 - A database browser/editor
   
-⚠️ Warning ⚠️<br>
+⚠️ Warning ⚠️
 ---
 Do not use this in production.
 This code uses a flask server in debug mode by default. It also has naïve connection pooling and little to no input sanitization or parameterization. This workbench is still under development and may not have all the features and capabilities you might expect from a complete computational chemistry toolset.
