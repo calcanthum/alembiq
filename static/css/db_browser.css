@@ -1,25 +1,17 @@
-body {
-    background-color: black;
-    color: white;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    box-sizing: border-box;
-}
-#input-section {
-    margin-bottom: 20px;
-    z-index: 1;
-    position: relative;
-}
-#molecule-viewer-container {
-    flex-grow: 1;
-    width: 100vw;
-    background-color: black;
-    z-index: 0;
-}
-#go-to-homepage-btn {
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        #go-to-homepage-btn {
             position: fixed;
             top: 2vw;
             right: 2vw;
@@ -34,4 +26,4 @@ body {
             align-items: center;
             justify-content: center;
             text-align: center;
-}
+        }

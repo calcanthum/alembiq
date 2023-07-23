@@ -21,14 +21,22 @@ def insert_molecule(request):
         molblock = Chem.MolToMolBlock(mol, includeStereo=True)
         inchi = Chem.MolToInchi(mol)
 
+        # Generate the SMARTS string for the molecule
+        smarts = Chem.MolToSmarts(mol)
+
         # Properly define and assign a value to the uuid variable
         generated_uuid = str(uuid.uuid4())
+
+        # Calculate molecule properties
+        molecular_weight = Chem.rdMolDescriptors.CalcExactMolWt(mol)
+        rotatable_bond_count = Chem.rdMolDescriptors.CalcNumRotatableBonds(mol)
+        aromaticity = any(atom.GetIsAromatic() for atom in mol.GetAtoms())
 
         conn = get_connection_from_pool()
 
         # Execute the insertion to the molecules table
-        values = (generated_uuid, smiles, inchi, iupac)  # Use the generated_uuid
-        statement = "INSERT INTO molecules (uuid, smiles, inchi, iupac) VALUES (%s, %s, %s, %s)"
+        values = (generated_uuid, smiles, inchi, iupac, smarts)  # Use the generated_uuid
+        statement = "INSERT INTO molecules (uuid, smiles, inchi, iupac, smarts) VALUES (%s, %s, %s, %s, %s)"
         cursor = conn.cursor()
         cursor.execute(statement, values)
         conn.commit()
@@ -40,6 +48,12 @@ def insert_molecule(request):
         # Insert molblock into the molblocks table
         values = (molecule_id, molblock)
         statement = "INSERT INTO molblocks (molecule_id, molblock) VALUES (%s, %s)"
+        cursor.execute(statement, values)
+        conn.commit()
+
+        # Insert molecule properties into the molecule_properties table
+        values = (molecule_id, molecular_weight, rotatable_bond_count, aromaticity)
+        statement = "INSERT INTO molecule_properties (molecule_id, molecular_weight, rotatable_bond_count, aromaticity) VALUES (%s, %s, %s, %s)"
         cursor.execute(statement, values)
         conn.commit()
 

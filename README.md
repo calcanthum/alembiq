@@ -1,6 +1,6 @@
-# Alembiq - A Computational Chemistry Workbench
+# AlembIQ - A Computational Chemistry Workbench
 
-Welcome to the Alembiq repository! This repository serves as a work in progress collection of tools and programs for computational chemistry. The workbench is powered by RDKit, Flask, and NGL Viewer.
+Welcome to the AlembIQ repository! This repository serves as a work in progress collection of tools and programs for computational chemistry. The workbench is powered by RDKit, Flask, and NGL Viewer.
 ## Version
 
 The current release version of the workbench is v0.5

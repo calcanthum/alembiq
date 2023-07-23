@@ -2,52 +2,12 @@
 <html>
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $("#edit-button").click(function() {
-                $(".editable-field").prop("disabled", false);
-                $(".submit-button").prop("disabled", false);
-                $(this).prop("disabled", true);
-            });
-        });
-    </script>
-
-    <title>Quill</title>
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-        th, td {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-
-        #go-to-homepage-btn {
-            position: fixed;
-            top: 2vw;
-            right: 2vw;
-            width: 3vw;
-            height: 3vw;
-            background-color: #ff0000;
-            color: #fff;
-            font-size: 3vw;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-    </style>
+    <script src="/static/js/db_browser.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/db_browser.css">
+    <title>Quill - DB Editor</title>
 </head>
 <body>
     <h1>Quill</h1>
-    <h2>Alembiq Database Editor</h2>
 
     <form method="post" action="/db_browser">
         <label for="selected_table">Select a Table:</label>
@@ -91,10 +51,5 @@
 
     <button id="go-to-homepage-btn" onclick="goToHomepage()">⚗</button>
 
-    <script>
-        function goToHomepage() {
-            window.location.href = "/";
-        }
-    </script>
 </body>
 </html>

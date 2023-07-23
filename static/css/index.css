@@ -1,0 +1,42 @@
+    /* Style for the body to center everything */
+    body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        text-align: center;
+    }
+
+    /* Style for the buttons container */
+    .buttons-container {
+        display: flex;
+        flex-direction: column; /* this makes the buttons stack vertically */
+        gap: 10px; /* Add some space between buttons */
+        align-items: center; /* Center the buttons horizontally */
+        justify-content: center; /* Center the buttons vertically */
+        width: 100%;
+    }
+
+    /* Style for individual buttons */
+    .buttons-container button {
+        width: 30%;
+        font-size: 24px; /* Adjust the size of the emoji and text as needed */
+        cursor: pointer; /* Change the cursor to a pointer on hover */
+    }
+
+    /* Custom CSS for the logo */
+    .logo {
+        font-size: 15vw;
+        display: block;
+    }
+
+    hr {
+        width: 30%;
+        border: none;
+        height: 1px;
+        background-color: black;
+    }
+        .buttons-container button:hover {
+        content: attr(data-text); /* Display the data-text attribute content on hover */
+    }

@@ -4,7 +4,7 @@ import uuid
 import psycopg2
 from dotenv import load_dotenv
 from rdkit import Chem
-from rdkit.Chem import rdMolDescriptors, Descriptors
+from rdkit.Chem import rdMolDescriptors, Descriptors, AllChem
 
 import db_core
 
@@ -71,7 +71,8 @@ class DBInitializer:
                 uuid UUID,
                 smiles TEXT,
                 inchi TEXT,
-                iupac TEXT
+                iupac TEXT,
+                smarts TEXT
             )
             """
             create_molecule_properties_table = """
@@ -80,7 +81,7 @@ class DBInitializer:
                 molecule_id INTEGER REFERENCES molecules(id),
                 molecular_weight FLOAT,
                 rotatable_bond_count INTEGER,
-                aromaticity INTEGER
+                aromaticity BOOL
             )
             """
             create_molblocks_table = """
@@ -94,7 +95,8 @@ class DBInitializer:
             CREATE TABLE IF NOT EXISTS reactions (
                 id SERIAL PRIMARY KEY,
                 uuid UUID,
-                reaction_type TEXT
+                reaction_type TEXT,
+                rxn TEXT
             )
             """
             create_catalysts_table = """
@@ -133,7 +135,7 @@ class DBInitializer:
             self.cursor.execute(create_molecule_properties_table)
             self.cursor.execute(create_molblocks_table)
             self.cursor.execute(create_reactions_table)
-            self.cursor.execute(create_catalysts_table)  # Move this before creating "reaction_participants" table
+            self.cursor.execute(create_catalysts_table)
             self.cursor.execute(create_reaction_participants_table)
             self.cursor.execute(create_conditions_table)
             self.conn.commit()
@@ -147,14 +149,15 @@ class DBInitializer:
 
     def insert_molecule(self, mol, iupac):
         try:
-            # Generate the molecule's SMILES, molblock, InChI, and UUID
+            # Generate the molecule's SMILES, molblock, InChI, SMARTS, and UUID
             smiles = Chem.MolToSmiles(mol)
             molblock = Chem.MolToMolBlock(mol, includeStereo=True)
             inchi = Chem.MolToInchi(mol)
+            smarts = Chem.MolToSmarts(mol)
             uuid = self.calculate_uuid()
 
-            values = (uuid, smiles, inchi, iupac)
-            statement = "INSERT INTO molecules (uuid, smiles, inchi, iupac) VALUES (%s, %s, %s, %s)"
+            values = (uuid, smiles, inchi, iupac, smarts)
+            statement = "INSERT INTO molecules (uuid, smiles, inchi, iupac, smarts) VALUES (%s, %s, %s, %s, %s)"
             db_core.execute_sql(self.conn, statement, values)
 
             molecule_id = self.get_molecule_id(iupac)
@@ -162,7 +165,7 @@ class DBInitializer:
             # Calculate molecule properties
             molecular_weight = Descriptors.MolWt(mol)
             rotatable_bond_count = rdMolDescriptors.CalcNumRotatableBonds(mol)
-            aromaticity = Chem.rdMolDescriptors.CalcNumAromaticRings(mol)  # returns an integer
+            aromaticity = any(atom.GetIsAromatic() for atom in mol.GetAtoms())
 
             # Print SMILES and rotatable bond count
             print(f'SMILES: {smiles}, Rotatable Bonds: {rotatable_bond_count}')
@@ -179,15 +182,34 @@ class DBInitializer:
             error_info = traceback.format_exc()  # Get the full traceback
             print("Error Inserting Molecule:", e, "\n", error_info)
 
-
     def insert_reaction(self, reaction_type, reactants, products):
         try:
             # Calculate a new UUID for the reaction
             reaction_uuid = self.calculate_uuid()
 
+            # Construct the ChemicalReaction object
+            rxn = AllChem.ChemicalReaction()
+
+            for role, molecules in [("reactant", reactants), ("product", products)]:
+                for molecule_iupac, stoichiometry in molecules:
+                    # Get the molecule's ID and SMILES
+                    self.cursor.execute("SELECT id, smiles FROM molecules WHERE iupac = %s", (molecule_iupac,))
+                    molecule_id, smiles = self.cursor.fetchone()
+
+                    # Repeat the SMILES string by the stoichiometry and add it to the list
+                    for _ in range(stoichiometry):
+                        mol = Chem.MolFromSmiles(smiles)
+                        if role == "reactant":
+                            rxn.AddReactantTemplate(mol)
+                        elif role == "product":
+                            rxn.AddProductTemplate(mol)
+
+            # Convert the reaction object to an RXN file string
+            rxn_str = AllChem.ReactionToRxnBlock(rxn)
+
             # Insert the reaction into the reactions table
-            statement = "INSERT INTO reactions (uuid, reaction_type) VALUES (%s, %s)"
-            self.cursor.execute(statement, (reaction_uuid, reaction_type))
+            statement = "INSERT INTO reactions (uuid, reaction_type, rxn) VALUES (%s, %s, %s)"
+            self.cursor.execute(statement, (reaction_uuid, reaction_type, rxn_str))
 
             # Get the ID of the reaction we just inserted
             self.cursor.execute("SELECT id FROM reactions WHERE uuid = %s", (reaction_uuid,))
