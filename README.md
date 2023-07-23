@@ -1,6 +1,7 @@
 # AlembIQ - A Computational Chemistry Workbench
 
 Welcome to the AlembIQ repository! This repository serves as a work in progress collection of tools and programs for computational chemistry. The workbench is powered by RDKit, Flask, and NGL Viewer.
+
 ## Version
 
 The current release version of the workbench is v0.5.1
@@ -13,17 +14,24 @@ The workbench currently contains four programs:
 - A database initializer that sets up a database with model data
   - Model data: ethanol, water, oxygen, carbon dioxide and a reaction entry describing the combustion of ethanol
 - A database browser/editor
-
-Please note that this workbench is still under development and may not have all the features and capabilities you might expect from a complete computational chemistry toolset. However, we are actively working on expanding its functionality and adding more tools in the future.
+  
+⚠️ Warning ⚠️<br>
+---
+Do not use this in production.
+This code uses a flask server in debug mode by default. It also has naïve connection pooling and little to no input sanitization or parameterization. This workbench is still under development and may not have all the features and capabilities you might expect from a complete computational chemistry toolset.
 
 ## Getting Started
 
-### Database Schema
-
-See: [Database Schema](./db_schema.md)
-
-To use the workbench, you will need to have Python installed on your server. Additionally, make sure you have the required dependencies listed in the `requirements.txt` file.
-
+To use the workbench, you will need to have Python installed and the required dependencies listed in the `requirements.txt` file. A Postgresql server and database must already exist. Database connection details are read from a(n) .env file with the following structure:
+```
+# .env
+DB_HOST='***'
+DB_NAME='***'
+DB_USER='***'
+DB_PASSWORD='***'
+DB_PORT='***'
+```
+The Database Initializer app will setup the database tables for you and insert model data according to this [Database Schema](./db_schema.md)
 1. Clone this repository to a local directory and enter it:
 
     ```
