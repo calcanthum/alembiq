@@ -3,7 +3,7 @@
 Welcome to the AlembIQ repository! This repository serves as a work in progress collection of tools and programs for computational chemistry. The workbench is powered by RDKit, Flask, and NGL Viewer.
 ## Version
 
-The current release version of the workbench is v0.5
+The current release version of the workbench is v0.5.1
 
 ## About
 
